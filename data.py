@@ -13,7 +13,6 @@ for ticker in factor_tickers:
     # add cleaned returns to dictionary
     factor_returns[ticker] = cum_ret
 
-print("Debug Closed")
 
 
 

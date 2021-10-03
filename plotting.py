@@ -2,6 +2,8 @@ from efficientFrontier import mean_variance_pairs
 import plotly.graph_objects as go
 import plotly.express as px
 import numpy as np
+import matplotlib.pyplot as plt
+from functions import check_sum
 import pandas as pd
 import math
 
@@ -12,9 +14,15 @@ mvp.rename({0:'mean', 1:'variance'}, axis=1, inplace=True)
 
 # sqrt variance for std
 mvp['std'] = mvp['variance'].apply(math.sqrt)
-
+mvp['sharpe'] = mvp['mean']/mvp['std']
 # Risk free rate for sharpe ratio
 rf =0
+
+# Get frontier coordinates (max return for given risk)
+# form potential returns, and get values nearby
+frontier_y = np.linspace(mvp['mean'].min(), mvp['mean'].max(), 200)
+
+frontier_x = []
 
 
 
