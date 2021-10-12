@@ -1,8 +1,11 @@
 from config import *
+from data import factor_names
 import requests
 import pandas as pd
 import numpy as np
-
+import seaborn as sns
+from config import cmap
+import matplotlib.pyplot as plt
 
 def get_histpri(ticker):
     # get response
@@ -52,3 +55,17 @@ def get_ret_vol_sr(weights, returns):
 def neg_sharpe(weights):
 # the number 2 is the sharpe ratio index from the get_ret_vol_sr
     return get_ret_vol_sr(weights)[2] * -1
+
+
+def eff_front_plot(mean, variance, weights, sharpe):
+    return None
+
+
+def correlation_plot(returns):
+    renamed_ret =  returns.set_axis(factor_names, axis=1, inplace=False)
+    plt.figure(figsize=(16, 6))
+    correlation_matrix = sns.heatmap(renamed_ret.corr(), vmin=-1, vmax=1, annot=True, cmap=cmap)
+    # Give a title to the heatmap. Pad defines the distance of the title from the top of the heatmap.
+    correlation_matrix.set_title('Correlation Heatmap', fontdict={'fontsize':12}, pad=12);
+    return plt
+

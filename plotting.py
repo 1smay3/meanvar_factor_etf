@@ -1,10 +1,18 @@
-import seaborn as sns
+
+from data import factor_returns, factor_tickers
+import pandas as pd
+from functions import correlation_plot
 
 
-def eff_front_plot(mean, variance, weights, sharpe):
-    return None
 
-def correlation_plot(returns):
-    unstyle_corr = sns.heatmap(returns.corr())
-    return unstyle_corr
+
+
+# Collect all prices into one dataframe
+pre_prices = []
+for ticker in factor_tickers:
+    pre_prices.append(factor_returns[ticker][ticker])
+
+daily_prices = pd.concat(pre_prices, axis=1).dropna()
+correlation_plot(daily_prices.pct_change()).show()
+
 
