@@ -15,4 +15,3 @@ for ticker in factor_tickers:
 
 
 
-
