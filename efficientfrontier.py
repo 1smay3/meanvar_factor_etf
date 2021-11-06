@@ -1,7 +1,9 @@
-from data import factor_returns, factor_tickers
+from functions import factor_returns, factor_tickers
 import pandas as pd
 import numpy as np
 
+# wrap into function
+# remove magic numbers (blue)
 
 # Collect all prices into one dataframe
 pre_prices = []
