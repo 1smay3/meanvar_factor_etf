@@ -23,9 +23,10 @@ def new_data(ticker, database):
     return None
 
 
-
-
-
-
+def read_daily_data(ticker, database):
+    db_ticker = ticker + "_EOD"
+    library = store[database]
+    library_obj = library.read(db_ticker)
+    return library_obj.data
 
 

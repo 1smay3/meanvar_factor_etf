@@ -1,4 +1,5 @@
-from functions import factor_returns, factor_tickers
+from config import factor_tickers
+from database import read_daily_data
 import pandas as pd
 import numpy as np
 
@@ -8,10 +9,15 @@ import numpy as np
 # Collect all prices into one dataframe
 pre_prices = []
 for ticker in factor_tickers:
-    pre_prices.append(factor_returns[ticker][ticker])
+    factor_data = read_daily_data(ticker, "US")
+    factor_prices = pd.Series(factor_data['adjClose'], name=ticker)
+    rel_prices = factor_prices.to_frame()
+    pre_prices.append(rel_prices)
+
 
 # Drop nan to allow comparison of returns over same timeframe
 daily_prices = pd.concat(pre_prices, axis=1).dropna()
+daily_prices.to_excel("data_for_local_run.xlsx")
 
 # Log returns
 log_ret = np.log(daily_prices).diff()
