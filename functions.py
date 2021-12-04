@@ -1,8 +1,6 @@
 import pandas as pd
 import numpy as np
-import seaborn as sns
-import matplotlib.pyplot as plt
-from config import factor_names
+
 
 
 def get_attribute(dictionary, attribute):
@@ -42,15 +40,3 @@ def eff_front_plot(mean, variance, weights, sharpe):
     return None
 
 
-def correlation_plot(returns):
-    renamed_ret = returns.set_axis(factor_names, axis=1, inplace=False)
-    plt.figure(figsize=(10, 4))
-    correlation_matrix = sns.heatmap(renamed_ret.corr(), vmin=-1, vmax=1, annot=True, cmap=cmap)
-    # Give a title to the heatmap. Pad defines the distance of the title from the top of the heatmap.
-    correlation_matrix.set_title('Correlation Heatmap', fontdict={'fontsize':12}, pad=12);
-    plt.savefig('corrmatrix.png', dpi=300, bbox_inches='tight')
-    return plt
-
-
-def create_color(r, g, b):
-    return [r / 256, g / 256, b / 256]

@@ -2,7 +2,9 @@ import plotly.express as px
 import pandas as pd
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
-
+import seaborn as sns
+import matplotlib.pyplot as plt
+from config import factor_names
 
 def line_chart(dataframe: pd.DataFrame, x_col_name: str, y_col_name: str, title: str):
     fig = px.line(dataframe, x=x_col_name, y=y_col_name, title=title)
@@ -90,4 +92,19 @@ def distribution_dashboard(source_data):
         , row=3, col=1)
 
     fig.update_layout(title_text="Factor Return Distributions", showlegend=False)
+    fig.write_html("data_store/distributions.html")
     return fig
+
+
+def correlation_plot(returns):
+    renamed_ret = returns.set_axis(factor_names, axis=1, inplace=False)
+    plt.figure(figsize=(10, 4))
+    correlation_matrix = sns.heatmap(renamed_ret.corr(), vmin=-1, vmax=1, annot=True, cmap=cmap)
+    # Give a title to the heatmap. Pad defines the distance of the title from the top of the heatmap.
+    correlation_matrix.set_title('Correlation Heatmap', fontdict={'fontsize':12}, pad=12);
+    plt.savefig('data_store/corrmatrix.png', dpi=300, bbox_inches='tight')
+    return plt
+
+
+def create_color(r, g, b):
+    return [r / 256, g / 256, b / 256]

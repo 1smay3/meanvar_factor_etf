@@ -20,7 +20,7 @@ daily_prices.to_excel("data_for_local_run.xlsx")
 # plot distribution dashboard
 distribution_dashboard(daily_prices.pct_change()).show()
 
-weights, returns, volatility, sharpe = efficient_frontier(daily_prices)
+#weights, returns, volatility, sharpe = efficient_frontier(daily_prices)
 
 
 
