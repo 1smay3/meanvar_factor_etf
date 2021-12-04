@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 from dataclasses import dataclass
-
+from tqdm import tqdm
 
 @dataclass
 class efficient_frontier:
@@ -26,7 +26,9 @@ class efficient_frontier:
         vol_arr = np.zeros(num_ports)
         sharpe_arr = np.zeros(num_ports)
 
-        for x in range(num_ports):
+        print("Running Optimisation with " + str(num_ports) + " iterations")
+        for x in tqdm(range(num_ports)):
+
             # Generate random numbers in numpy array (between 1 and 0), then normalise to form random weights
             weights = np.array(np.random.random(len(self.columns)))
             weights = weights / np.sum(weights)
@@ -50,5 +52,5 @@ class efficient_frontier:
         sharpe_arr_df = pd.DataFrame(sharpe_arr, columns=["sharpe"])
 
         m_v_port = pd.concat([all_weights_df, rets_arr_df, vol_arr_df, sharpe_arr_df], axis=1)
-
+        print("Optimisation Complete")
         return m_v_port

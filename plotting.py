@@ -20,7 +20,7 @@ def distribution_dashboard(source_data):
         rows=3, cols=3,
         specs=[[{}, {}, {}],
                [{}, {}, {}],
-               [{"rowspan": 1, "colspan": 3, "type": "table"}, None, None]], print_grid=True,
+               [{"rowspan": 1, "colspan": 3, "type": "table"}, None, None]], print_grid=False,
         subplot_titles=labels_tuple)
 
     # Make list of values for table
@@ -35,7 +35,6 @@ def distribution_dashboard(source_data):
     for ticker in source_data.columns:
         # Get position of subplot
         i += 1
-        print(ticker, i)
         if i < 4:
             row = 1
             col = i
@@ -112,7 +111,7 @@ def create_color(r, g, b):
 
 
 def frontier_scatter(mean_var_output, alL_factor_tickers):
-    pre_text = "Portfolio Weights: "
+    pre_text = "Portfolio Weights: <br>"
     post_text = ""
     for ticker in alL_factor_tickers:
         item = ticker + ": " + mean_var_output[ticker].map('{:.2%}'.format) + "<br>"
@@ -136,5 +135,5 @@ def frontier_scatter(mean_var_output, alL_factor_tickers):
                       yaxis=dict(title='Annualised Return'),
                       title='Sample of Random Portfolios',
                       coloraxis_colorbar=dict(title="Sharpe Ratio"))
-
+    fig.write_html("data_store/frontier.html")
     return fig
