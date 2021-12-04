@@ -3,20 +3,6 @@
 
 </div>
 
-<!-- TABLE OF CONTENTS -->
-<details>
-  <summary>Table of Contents</summary>
-  <ol>
-    <li>
-      <a href="#about-the-project">About The Project</a>
-      <ul>
-        <li><a href="#Project Outline">Project Outline</a></li>
-      </ul>
-    </li>
-    </ol>
-</details>
-
-
 ### Project Outline
 
 * Import Factor Data from API
