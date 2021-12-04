@@ -3,6 +3,7 @@ import numpy as np
 from dataclasses import dataclass
 from tqdm import tqdm
 
+
 @dataclass
 class efficient_frontier:
     all_weights: np.array
@@ -26,6 +27,7 @@ class efficient_frontier:
         vol_arr = np.zeros(num_ports)
         sharpe_arr = np.zeros(num_ports)
 
+        print("\n")
         print("Running Optimisation with " + str(num_ports) + " iterations")
         for x in tqdm(range(num_ports)):
 
