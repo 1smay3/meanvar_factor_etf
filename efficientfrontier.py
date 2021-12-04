@@ -1,37 +1,54 @@
 import pandas as pd
 import numpy as np
+from dataclasses import dataclass
 
 
-def efficient_frontier(price_dataframe: pd.DataFrame):
-    # Log returns
-    log_ret = np.log(price_dataframe).diff()
+@dataclass
+class efficient_frontier:
+    all_weights: np.array
+    all_weights_df: pd.DataFrame
+    rets_arr: np.array
+    rets_arr_df: pd.DataFrame
+    vol_arr: np.array
+    vol_arr_df: pd.DataFrame
+    sharpe_arr: np.array
+    sharpe_arr_df: pd.DataFrame
 
-    # Construct blank holders for returns, volatility, sharpe, and weights of randomised portfolios
-    np.random.seed(13)
-    num_ports = 10000
-    all_weights = np.zeros((num_ports, len(price_dataframe.columns)))
-    rets_arr = np.zeros(num_ports)
-    vol_arr = np.zeros(num_ports)
-    sharpe_arr = np.zeros(num_ports)
+    def calculate(self: pd.DataFrame, iterations: int):
+        # Log returns
+        log_ret = np.log(self).diff()
 
-    for x in range(num_ports):
-        # Generate random numbers in numpy array (between 1 and 0), then normalise to form random weights
-        weights = np.array(np.random.random(len(price_dataframe.columns)))
-        weights = weights / np.sum(weights)
+        # Construct blank holders for returns, volatility, sharpe, and weights of randomised portfolios
+        np.random.seed(13)
+        num_ports = iterations
+        all_weights = np.zeros((num_ports, len(self.columns)))
+        rets_arr = np.zeros(num_ports)
+        vol_arr = np.zeros(num_ports)
+        sharpe_arr = np.zeros(num_ports)
 
-        # Save weights
-        all_weights[x, :] = weights
+        for x in range(num_ports):
+            # Generate random numbers in numpy array (between 1 and 0), then normalise to form random weights
+            weights = np.array(np.random.random(len(self.columns)))
+            weights = weights / np.sum(weights)
 
-        # Expected return as per hand written notes
-        rets_arr[x] = np.sum((log_ret.mean() * weights * 252))
+            # Save weights
+            all_weights[x, :] = weights
 
-        # Expected volatility as per hand written notes
-        vol_arr[x] = np.sqrt(np.dot(weights.T, np.dot(log_ret.cov() * 252, weights)))
+            # Expected return as per hand written notes
+            rets_arr[x] = np.sum((log_ret.mean() * weights * 252))
 
-        # Sharpe Ratio
-        sharpe_arr[x] = rets_arr[x] / vol_arr[x]
+            # Expected volatility as per hand written notes
+            vol_arr[x] = np.sqrt(np.dot(weights.T, np.dot(log_ret.cov() * 252, weights)))
 
-    return all_weights, rets_arr, vol_arr, sharpe_arr
+            # Sharpe Ratio
+            sharpe_arr[x] = rets_arr[x] / vol_arr[x]
 
+        # Form df for easier manipulation and plotting
+        all_weights_df = pd.DataFrame(all_weights, columns=self.columns)
+        rets_arr_df = pd.DataFrame(rets_arr, columns=["returns"])
+        vol_arr_df = pd.DataFrame(vol_arr, columns=["volatility"])
+        sharpe_arr_df = pd.DataFrame(sharpe_arr, columns=["sharpe"])
 
+        m_v_port = pd.concat([all_weights_df, rets_arr_df, vol_arr_df, sharpe_arr_df], axis=1)
 
+        return m_v_port

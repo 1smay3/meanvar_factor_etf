@@ -6,6 +6,7 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 from config import factor_names
 
+
 def line_chart(dataframe: pd.DataFrame, x_col_name: str, y_col_name: str, title: str):
     fig = px.line(dataframe, x=x_col_name, y=y_col_name, title=title)
     return fig
@@ -32,38 +33,38 @@ def distribution_dashboard(source_data):
 
     i = 0
     for ticker in source_data.columns:
-            # Get position of subplot
-            i += 1
-            print(ticker, i)
-            if i < 4:
-                row = 1
-                col = i
-            else:
-                row = 2
-                col = i - 3
+        # Get position of subplot
+        i += 1
+        print(ticker, i)
+        if i < 4:
+            row = 1
+            col = i
+        else:
+            row = 2
+            col = i - 3
 
-            rel_source_data = source_data[ticker]
-            source_data_no_idx = rel_source_data.reset_index()
+        rel_source_data = source_data[ticker]
+        source_data_no_idx = rel_source_data.reset_index()
 
-            factor_mean = source_data_no_idx.mean(numeric_only=True)
-            factor_median = source_data_no_idx.median(numeric_only=True)
-            factor_std = source_data_no_idx.std(numeric_only=True)
-            factor_skew = source_data_no_idx.skew(numeric_only=True)
-            factor_kurt = source_data_no_idx.kurtosis(numeric_only=True)
-            sample_size = len(source_data_no_idx)
+        factor_mean = source_data_no_idx.mean(numeric_only=True)
+        factor_median = source_data_no_idx.median(numeric_only=True)
+        factor_std = source_data_no_idx.std(numeric_only=True)
+        factor_skew = source_data_no_idx.skew(numeric_only=True)
+        factor_kurt = source_data_no_idx.kurtosis(numeric_only=True)
+        sample_size = len(source_data_no_idx)
 
-            # Histogram each dist on one page
-            fig.append_trace(go.Histogram(x=rel_source_data, histnorm='probability'), row=row, col=col)
+        # Histogram each dist on one page
+        fig.append_trace(go.Histogram(x=rel_source_data, histnorm='probability'), row=row, col=col)
 
-            # Add to lists for table
-            mean.append('{:.2%}'.format(factor_mean[0]))
-            median.append('{:.2%}'.format(factor_median[0]))
-            std.append('{:.2%}'.format(factor_std[0]))
-            skew.append('{:.3}'.format(factor_skew[0]))
-            kurt.append('{:.3}'.format(factor_kurt[0]))
-            sample_size_list.append('{:1}'.format(sample_size))
+        # Add to lists for table
+        mean.append('{:.2%}'.format(factor_mean[0]))
+        median.append('{:.2%}'.format(factor_median[0]))
+        std.append('{:.2%}'.format(factor_std[0]))
+        skew.append('{:.3}'.format(factor_skew[0]))
+        kurt.append('{:.3}'.format(factor_kurt[0]))
+        sample_size_list.append('{:1}'.format(sample_size))
 
-        # Create table to add at bottom from df
+    # Create table to add at bottom from df
 
     sample_stats = pd.DataFrame(
         {'Mean': mean,
@@ -101,10 +102,39 @@ def correlation_plot(returns):
     plt.figure(figsize=(10, 4))
     correlation_matrix = sns.heatmap(renamed_ret.corr(), vmin=-1, vmax=1, annot=True, cmap=cmap)
     # Give a title to the heatmap. Pad defines the distance of the title from the top of the heatmap.
-    correlation_matrix.set_title('Correlation Heatmap', fontdict={'fontsize':12}, pad=12);
+    correlation_matrix.set_title('Correlation Heatmap', fontdict={'fontsize': 12}, pad=12);
     plt.savefig('data_store/corrmatrix.png', dpi=300, bbox_inches='tight')
     return plt
 
 
 def create_color(r, g, b):
     return [r / 256, g / 256, b / 256]
+
+
+def frontier_scatter(mean_var_output, alL_factor_tickers):
+    pre_text = "Portfolio Weights: "
+    post_text = ""
+    for ticker in alL_factor_tickers:
+        item = ticker + ": " + mean_var_output[ticker].map('{:.2%}'.format) + "<br>"
+        post_text += item
+
+    fig = go.Figure()
+    fig.add_trace(go.Scatter(x=mean_var_output["volatility"],
+                             y=mean_var_output["returns"],
+                             text=pre_text + post_text,
+                             marker=dict(color=(mean_var_output["sharpe"]),
+                                         showscale=True,
+                                         size=7,
+                                         line=dict(width=1),
+                                         colorscale="aggrnyl",
+                                         colorbar=dict(title="Sharpe<br>Ratio")
+                                         ),
+                             mode='markers'))
+
+    fig.update_layout(template='plotly_white',
+                      xaxis=dict(title='Annualised Risk (Volatility)'),
+                      yaxis=dict(title='Annualised Return'),
+                      title='Sample of Random Portfolios',
+                      coloraxis_colorbar=dict(title="Sharpe Ratio"))
+
+    return fig
