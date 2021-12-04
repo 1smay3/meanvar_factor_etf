@@ -17,11 +17,16 @@ def distribution_dashboard(source_data):
     labels_tuple = tuple(source_data.columns)
 
     fig = make_subplots(
-        rows=3, cols=3,
-        specs=[[{}, {}, {}],
-               [{}, {}, {}],
-               [{"rowspan": 1, "colspan": 3, "type": "table"}, None, None]], print_grid=False,
-        subplot_titles=labels_tuple)
+        rows=3,
+        cols=3,
+        specs=[
+            [{}, {}, {}],
+            [{}, {}, {}],
+            [{"rowspan": 1, "colspan": 3, "type": "table"}, None, None],
+        ],
+        print_grid=False,
+        subplot_titles=labels_tuple,
+    )
 
     # Make list of values for table
     mean = []
@@ -53,43 +58,54 @@ def distribution_dashboard(source_data):
         sample_size = len(source_data_no_idx)
 
         # Histogram each dist on one page
-        fig.append_trace(go.Histogram(x=rel_source_data, histnorm='probability'), row=row, col=col)
+        fig.append_trace(
+            go.Histogram(x=rel_source_data, histnorm="probability"), row=row, col=col
+        )
 
         # Add to lists for table
-        mean.append('{:.2%}'.format(factor_mean[0]))
-        median.append('{:.2%}'.format(factor_median[0]))
-        std.append('{:.2%}'.format(factor_std[0]))
-        skew.append('{:.3}'.format(factor_skew[0]))
-        kurt.append('{:.3}'.format(factor_kurt[0]))
-        sample_size_list.append('{:1}'.format(sample_size))
+        mean.append("{:.2%}".format(factor_mean[0]))
+        median.append("{:.2%}".format(factor_median[0]))
+        std.append("{:.2%}".format(factor_std[0]))
+        skew.append("{:.3}".format(factor_skew[0]))
+        kurt.append("{:.3}".format(factor_kurt[0]))
+        sample_size_list.append("{:1}".format(sample_size))
 
     # Create table to add at bottom from df
 
     sample_stats = pd.DataFrame(
-        {'Mean': mean,
-         'Median': median,
-         'Standard Deviation': std,
-         'Skew': skew,
-         'Kurtosis': kurt,
-         'Sample Size': sample_size_list
-         }, index=source_data.columns)
+        {
+            "Mean": mean,
+            "Median": median,
+            "Standard Deviation": std,
+            "Skew": skew,
+            "Kurtosis": kurt,
+            "Sample Size": sample_size_list,
+        },
+        index=source_data.columns,
+    )
 
     sample_stats_labeled = sample_stats.reset_index()
-    sample_stats_labeled = sample_stats_labeled.rename({'index': "Day of Week"}, axis=1)
+    sample_stats_labeled = sample_stats_labeled.rename({"index": "Day of Week"}, axis=1)
 
-    fig.add_trace(go.Table(
-        header=dict(values=list(sample_stats_labeled.columns),
-
-                    align='center'),
-        cells=dict(
-            values=[sample_stats_labeled['Day of Week'], sample_stats_labeled['Mean'],
-                    sample_stats_labeled['Median'],
-                    sample_stats_labeled['Standard Deviation'], sample_stats_labeled['Skew'],
-                    sample_stats_labeled['Kurtosis'],
-                    sample_stats_labeled['Sample Size']],
-
-            align='center'))
-        , row=3, col=1)
+    fig.add_trace(
+        go.Table(
+            header=dict(values=list(sample_stats_labeled.columns), align="center"),
+            cells=dict(
+                values=[
+                    sample_stats_labeled["Day of Week"],
+                    sample_stats_labeled["Mean"],
+                    sample_stats_labeled["Median"],
+                    sample_stats_labeled["Standard Deviation"],
+                    sample_stats_labeled["Skew"],
+                    sample_stats_labeled["Kurtosis"],
+                    sample_stats_labeled["Sample Size"],
+                ],
+                align="center",
+            ),
+        ),
+        row=3,
+        col=1,
+    )
 
     fig.update_layout(title_text="Factor Return Distributions", showlegend=False)
     fig.write_html("data_store/distributions.html")
@@ -99,10 +115,14 @@ def distribution_dashboard(source_data):
 def correlation_plot(returns):
     renamed_ret = returns.set_axis(factor_names, axis=1, inplace=False)
     plt.figure(figsize=(10, 4))
-    correlation_matrix = sns.heatmap(renamed_ret.corr(), vmin=-1, vmax=1, annot=True, cmap=cmap)
+    correlation_matrix = sns.heatmap(
+        renamed_ret.corr(), vmin=-1, vmax=1, annot=True, cmap=cmap
+    )
     # Give a title to the heatmap. Pad defines the distance of the title from the top of the heatmap.
-    correlation_matrix.set_title('Correlation Heatmap', fontdict={'fontsize': 12}, pad=12);
-    plt.savefig('data_store/corrmatrix.png', dpi=300, bbox_inches='tight')
+    correlation_matrix.set_title(
+        "Correlation Heatmap", fontdict={"fontsize": 12}, pad=12
+    )
+    plt.savefig("data_store/corrmatrix.png", dpi=300, bbox_inches="tight")
     return plt
 
 
@@ -114,26 +134,33 @@ def frontier_scatter(mean_var_output, alL_factor_tickers):
     pre_text = "Portfolio Weights: <br>"
     post_text = ""
     for ticker in alL_factor_tickers:
-        item = ticker + ": " + mean_var_output[ticker].map('{:.2%}'.format) + "<br>"
+        item = ticker + ": " + mean_var_output[ticker].map("{:.2%}".format) + "<br>"
         post_text += item
 
     fig = go.Figure()
-    fig.add_trace(go.Scatter(x=mean_var_output["volatility"],
-                             y=mean_var_output["returns"],
-                             text=pre_text + post_text,
-                             marker=dict(color=(mean_var_output["sharpe"]),
-                                         showscale=True,
-                                         size=7,
-                                         line=dict(width=1),
-                                         colorscale="aggrnyl",
-                                         colorbar=dict(title="Sharpe<br>Ratio")
-                                         ),
-                             mode='markers'))
+    fig.add_trace(
+        go.Scatter(
+            x=mean_var_output["volatility"],
+            y=mean_var_output["returns"],
+            text=pre_text + post_text,
+            marker=dict(
+                color=(mean_var_output["sharpe"]),
+                showscale=True,
+                size=7,
+                line=dict(width=1),
+                colorscale="aggrnyl",
+                colorbar=dict(title="Sharpe<br>Ratio"),
+            ),
+            mode="markers",
+        )
+    )
 
-    fig.update_layout(template='plotly_white',
-                      xaxis=dict(title='Annualised Risk (Volatility)'),
-                      yaxis=dict(title='Annualised Return'),
-                      title='Sample of Random Portfolios',
-                      coloraxis_colorbar=dict(title="Sharpe Ratio"))
+    fig.update_layout(
+        template="plotly_white",
+        xaxis=dict(title="Annualised Risk (Volatility)"),
+        yaxis=dict(title="Annualised Return"),
+        title="Sample of Random Portfolios",
+        coloraxis_colorbar=dict(title="Sharpe Ratio"),
+    )
     fig.write_html("data_store/frontier.html")
     return fig

@@ -1,11 +1,11 @@
+from dataclasses import dataclass
 import pandas as pd
 import numpy as np
-from dataclasses import dataclass
 from tqdm import tqdm
 
 
 @dataclass
-class efficient_frontier:
+class EfficientFrontier:
     all_weights: np.array
     all_weights_df: pd.DataFrame
     rets_arr: np.array
@@ -19,7 +19,9 @@ class efficient_frontier:
         # Log returns
         log_ret = np.log(self).diff()
 
-        # Construct blank holders for returns, volatility, sharpe, and weights of randomised portfolios
+        # Construct blank holders for returns, volatility, sharpe, and weights of randomised
+        # portfolios
+
         np.random.seed(13)
         num_ports = iterations
         all_weights = np.zeros((num_ports, len(self.columns)))
@@ -42,7 +44,9 @@ class efficient_frontier:
             rets_arr[x] = np.sum((log_ret.mean() * weights * 252))
 
             # Expected volatility as per hand written notes
-            vol_arr[x] = np.sqrt(np.dot(weights.T, np.dot(log_ret.cov() * 252, weights)))
+            vol_arr[x] = np.sqrt(
+                np.dot(weights.T, np.dot(log_ret.cov() * 252, weights))
+            )
 
             # Sharpe Ratio
             sharpe_arr[x] = rets_arr[x] / vol_arr[x]
@@ -53,6 +57,8 @@ class efficient_frontier:
         vol_arr_df = pd.DataFrame(vol_arr, columns=["volatility"])
         sharpe_arr_df = pd.DataFrame(sharpe_arr, columns=["sharpe"])
 
-        m_v_port = pd.concat([all_weights_df, rets_arr_df, vol_arr_df, sharpe_arr_df], axis=1)
+        m_v_port = pd.concat(
+            [all_weights_df, rets_arr_df, vol_arr_df, sharpe_arr_df], axis=1
+        )
         print("Optimisation Complete")
         return m_v_port
