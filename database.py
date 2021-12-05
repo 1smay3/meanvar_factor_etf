@@ -34,3 +34,4 @@ def read_daily_data(ticker, database):
     library = store[database]
     library_obj = library.read(db_ticker)
     return library_obj.data
+
