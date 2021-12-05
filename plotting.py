@@ -4,7 +4,7 @@ import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 import seaborn as sns
 import matplotlib.pyplot as plt
-from config import factor_names
+from config import factor_names, NUM_PORT
 
 
 def line_chart(dataframe: pd.DataFrame, x_col_name: str, y_col_name: str, title: str):
@@ -108,7 +108,8 @@ def distribution_dashboard(source_data):
     )
 
     fig.update_layout(title_text="Factor Return Distributions", showlegend=False)
-    fig.write_html("outputs/distributions.html")
+    with open("outputs/factor-distributions.html", 'a') as f:
+        f.write(fig.to_html(full_html=True, include_plotlyjs='cdn'))
     return fig
 
 
@@ -122,7 +123,8 @@ def correlation_plot(returns):
     correlation_matrix.set_title(
         "Correlation Heatmap", fontdict={"fontsize": 12}, pad=12
     )
-    plt.savefig("outputs/corrmatrix.png", dpi=300, bbox_inches="tight")
+    plt.savefig("outputs/factor-corr.png", dpi=300, bbox_inches="tight")
+
     return plt
 
 
@@ -193,8 +195,10 @@ def frontier_scatter(mean_var_output, alL_factor_tickers):
         template="plotly_white",
         xaxis=dict(title="Annualised Risk (Volatility)"),
         yaxis=dict(title="Annualised Return"),
-        title="Sample of Random Portfolios",
+        title="Sample of Random Portfolios" + "<br>" + (', '.join(str(x) for x in alL_factor_tickers)) + "<br>"
+              + "Iterations: " + str(NUM_PORT),
         coloraxis_colorbar=dict(title="Sharpe Ratio"),
     )
-    fig.write_html("outputs/frontier.html")
+    with open("outputs/factor-frontier.html", 'a') as f:
+        f.write(fig.to_html(full_html=True, include_plotlyjs='cdn'))
     return fig
