@@ -29,4 +29,5 @@ if __name__ == "__main__":
 
     # Return Max Sharpe Portfolio
     max_sharpe_portfolio = mean_var_port.loc[mean_var_port['sharpe'].idxmax()]
+    pd.options.display.float_format = '{:.2%}'.format
     print(max_sharpe_portfolio)
