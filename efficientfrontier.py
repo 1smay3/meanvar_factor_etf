@@ -2,6 +2,7 @@ from dataclasses import dataclass
 import pandas as pd
 import numpy as np
 from tqdm import tqdm
+from config import RANDOM_SEED, TD_PER_YEAR
 
 
 @dataclass
@@ -22,7 +23,7 @@ class EfficientFrontier:
         # Construct blank holders for returns, volatility, sharpe, and weights of randomised
         # portfolios
 
-        np.random.seed(13)
+        np.random.seed(RANDOM_SEED)
         num_ports = iterations
         all_weights = np.zeros((num_ports, len(self.columns)))
         rets_arr = np.zeros(num_ports)
@@ -41,11 +42,11 @@ class EfficientFrontier:
             all_weights[x, :] = weights
 
             # Expected return as per hand written notes
-            rets_arr[x] = np.sum((log_ret.mean() * weights * 252))
+            rets_arr[x] = np.sum((log_ret.mean() * weights * TD_PER_YEAR))
 
             # Expected volatility as per hand written notes
             vol_arr[x] = np.sqrt(
-                np.dot(weights.T, np.dot(log_ret.cov() * 252, weights))
+                np.dot(weights.T, np.dot(log_ret.cov() * TD_PER_YEAR, weights))
             )
 
             # Sharpe Ratio

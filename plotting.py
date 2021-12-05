@@ -108,7 +108,7 @@ def distribution_dashboard(source_data):
     )
 
     fig.update_layout(title_text="Factor Return Distributions", showlegend=False)
-    fig.write_html("data_store/distributions.html")
+    fig.write_html("outputs/distributions.html")
     return fig
 
 
@@ -122,7 +122,7 @@ def correlation_plot(returns):
     correlation_matrix.set_title(
         "Correlation Heatmap", fontdict={"fontsize": 12}, pad=12
     )
-    plt.savefig("data_store/corrmatrix.png", dpi=300, bbox_inches="tight")
+    plt.savefig("outputs/corrmatrix.png", dpi=300, bbox_inches="tight")
     return plt
 
 
@@ -162,5 +162,5 @@ def frontier_scatter(mean_var_output, alL_factor_tickers):
         title="Sample of Random Portfolios",
         coloraxis_colorbar=dict(title="Sharpe Ratio"),
     )
-    fig.write_html("data_store/frontier.html")
+    fig.write_html("outputs/frontier.html")
     return fig
