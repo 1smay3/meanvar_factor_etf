@@ -131,13 +131,22 @@ def create_color(r, g, b):
 
 
 def frontier_scatter(mean_var_output, alL_factor_tickers):
+    # Build annotations for hover text
     pre_text = "Portfolio Weights: <br>"
     post_text = ""
     for ticker in alL_factor_tickers:
         item = ticker + ": " + mean_var_output[ticker].map("{:.2%}".format) + "<br>"
         post_text += item
 
+    # Max sharpe
+    max_sharpe_portfolio = mean_var_output.loc[mean_var_output['sharpe'].idxmax()]
+    max_sharpe_vol = max_sharpe_portfolio['volatility']
+    max_sharpe_rets = max_sharpe_portfolio['returns']
+
+    # Init figure
     fig = go.Figure()
+
+    # Add plots for all simulated portfolios, with colour gradient for Sharpe
     fig.add_trace(
         go.Scatter(
             x=mean_var_output["volatility"],
@@ -154,6 +163,18 @@ def frontier_scatter(mean_var_output, alL_factor_tickers):
             mode="markers",
         )
     )
+
+    # Add market for max sharpe
+    fig.add_annotation(dict(font=dict(color='rgba(0,0,200,0.8)', size=12),
+                            x=max_sharpe_vol,
+                            # x = xStart
+                            y=max_sharpe_rets,
+                            text='Max Sharpe Portfolio',
+                            # ax = -10,
+                            textangle=0,
+                            xanchor='right',
+                            xref="x",
+                            yref="y"))
 
     fig.update_layout(
         template="plotly_white",
