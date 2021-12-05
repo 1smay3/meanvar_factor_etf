@@ -25,4 +25,4 @@ if __name__ == "__main__":
     mean_var_port = EfficientFrontier.calculate(daily_prices, 10000)
 
     # Plot optimised portfolios
-    frontier_scatter(mean_var_port, factor_tickers)
+    frontier_scatter(mean_var_port, factor_tickers).show()

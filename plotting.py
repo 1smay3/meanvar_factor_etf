@@ -132,7 +132,7 @@ def create_color(r, g, b):
 
 def frontier_scatter(mean_var_output, alL_factor_tickers):
     # Build annotations for hover text
-    pre_text = "Portfolio Weights: <br>"
+    pre_text = "<b>Portfolio Weights</b><br>"
     post_text = ""
     for ticker in alL_factor_tickers:
         item = ticker + ": " + mean_var_output[ticker].map("{:.2%}".format) + "<br>"
@@ -142,6 +142,11 @@ def frontier_scatter(mean_var_output, alL_factor_tickers):
     max_sharpe_portfolio = mean_var_output.loc[mean_var_output['sharpe'].idxmax()]
     max_sharpe_vol = max_sharpe_portfolio['volatility']
     max_sharpe_rets = max_sharpe_portfolio['returns']
+
+    # Min Volatility
+    min_volatility_portfolio = mean_var_output.loc[mean_var_output['volatility'].idxmin()]
+    min_vol_vol = min_volatility_portfolio['volatility']
+    min_vol_ret = min_volatility_portfolio['returns']
 
     # Init figure
     fig = go.Figure()
@@ -167,10 +172,18 @@ def frontier_scatter(mean_var_output, alL_factor_tickers):
     # Add market for max sharpe
     fig.add_annotation(dict(font=dict(color='rgba(0,0,200,0.8)', size=12),
                             x=max_sharpe_vol,
-                            # x = xStart
                             y=max_sharpe_rets,
-                            text='Max Sharpe Portfolio',
-                            # ax = -10,
+                            text='Max Sharpe',
+                            textangle=0,
+                            xanchor='right',
+                            xref="x",
+                            yref="y"))
+
+    # Add market for minimum volatility
+    fig.add_annotation(dict(font=dict(color='rgba(0,0,200,0.8)', size=12),
+                            x=min_vol_vol,
+                            y=min_vol_ret,
+                            text='Minimum Volatility',
                             textangle=0,
                             xanchor='right',
                             xref="x",
