@@ -1,5 +1,5 @@
 import pandas as pd
-from config import factor_tickers
+from config import factor_tickers, NUM_PORT
 from database import read_daily_data
 from efficientfrontier import EfficientFrontier
 from plotting import distribution_dashboard, frontier_scatter
@@ -22,7 +22,11 @@ if __name__ == "__main__":
     distribution_dashboard(daily_prices.pct_change())
 
     # Run mean_var optimisation
-    mean_var_port = EfficientFrontier.calculate(daily_prices, 10000)
+    mean_var_port = EfficientFrontier.calculate(daily_prices, NUM_PORT)
 
     # Plot optimised portfolios
     frontier_scatter(mean_var_port, factor_tickers).show()
+
+    # Return Max Sharpe Portfolio
+    max_sharpe_portfolio = mean_var_port.loc[mean_var_port['sharpe'].idxmax()]
+    print(max_sharpe_portfolio)
