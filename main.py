@@ -2,7 +2,7 @@ import pandas as pd
 from config import factor_tickers, NUM_PORT
 from database import read_daily_data
 from efficientfrontier import EfficientFrontier
-from plotting import distribution_dashboard, frontier_scatter
+from plotting import distribution_dashboard, frontier_scatter, correlation_plot
 
 if __name__ == "__main__":
 
@@ -17,6 +17,9 @@ if __name__ == "__main__":
     # Drop nan to allow comparison of returns over same timeframe
     daily_prices = pd.concat(pre_prices, axis=1).dropna()
     daily_prices.to_excel("data_for_local_run.xlsx")
+
+    # Plot corr matrix
+    correlation_plot(daily_prices.pct_change())
 
     # Plot distribution dashboard of chosen factors
     distribution_dashboard(daily_prices.pct_change())

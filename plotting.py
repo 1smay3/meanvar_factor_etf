@@ -108,7 +108,7 @@ def distribution_dashboard(source_data):
     )
 
     fig.update_layout(title_text="Factor Return Distributions", showlegend=False)
-    with open("outputs/factor-distributions.html", 'a') as f:
+    with open("outputs/distributions.html", 'a') as f:
         f.write(fig.to_html(full_html=True, include_plotlyjs='cdn'))
     return fig
 
@@ -117,13 +117,13 @@ def correlation_plot(returns):
     renamed_ret = returns.set_axis(factor_names, axis=1, inplace=False)
     plt.figure(figsize=(10, 4))
     correlation_matrix = sns.heatmap(
-        renamed_ret.corr(), vmin=-1, vmax=1, annot=True, cmap=cmap
+        renamed_ret.corr(), vmin=-1, vmax=1, annot=True
     )
     # Give a title to the heatmap. Pad defines the distance of the title from the top of the heatmap.
     correlation_matrix.set_title(
         "Correlation Heatmap", fontdict={"fontsize": 12}, pad=12
     )
-    plt.savefig("outputs/factor-corr.png", dpi=300, bbox_inches="tight")
+    plt.savefig("outputs/corr.png", dpi=300, bbox_inches="tight")
 
     return plt
 
@@ -199,6 +199,6 @@ def frontier_scatter(mean_var_output, alL_factor_tickers):
               + "Iterations: " + str(NUM_PORT),
         coloraxis_colorbar=dict(title="Sharpe Ratio"),
     )
-    with open("outputs/factor-frontier.html", 'a') as f:
+    with open("outputs/frontier.html", 'a') as f:
         f.write(fig.to_html(full_html=True, include_plotlyjs='cdn'))
     return fig
